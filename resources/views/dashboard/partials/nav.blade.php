@@ -10,7 +10,7 @@
                 <div class="nav-titulo">Inicio</div>
             </a>
         </li>
-         @if (app()->isLocal() == true)
+         @if (config('app.debug') == true)
         <li>
 
             <a href="{{ route('changeDay') }}">

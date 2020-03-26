@@ -15,7 +15,7 @@ class DebugMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if(!app()->isLocal()){
+        if(!config('app.debug')){
             return redirect(route('home'));
         }
         return $next($request);

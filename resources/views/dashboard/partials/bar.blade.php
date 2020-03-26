@@ -11,7 +11,7 @@
 	</div>
 	<div class="menu-user-container">
 		<div class="avatar">
-            <span>{!! app()->isLocal() ? "Dia: ".\App\Helpers\Dates::getNameDay(session('day'))."&nbsp;".session('day').'&nbsp;&nbsp;' : '' !!}  Hola, {{ Auth::user()->full_name }}&nbsp; </span>
+            <span>{!! config('app.debug') == true ? "Dia: ".\App\Helpers\Dates::getNameDay(session('day'))."&nbsp;".session('day').'&nbsp;&nbsp;' : '' !!}  Hola, {{ Auth::user()->full_name }}&nbsp; </span>
 			<div class="show-menu-user">
                     <i class="fas fa-caret-down"></i>
 			</div>
