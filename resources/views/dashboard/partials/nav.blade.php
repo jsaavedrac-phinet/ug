@@ -10,7 +10,7 @@
                 <div class="nav-titulo">Inicio</div>
             </a>
         </li>
-        @if (env('APP_DEBUG'))
+        @if (config('app.debug') == true)
         <li>
 
             <a href="{{ route('changeDay') }}">

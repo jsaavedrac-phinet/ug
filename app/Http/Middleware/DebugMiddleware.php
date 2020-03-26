@@ -15,7 +15,7 @@ class DebugMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if(!env('APP_DEBUG')){
+        if(!config('app.debug') == true){
             return redirect(route('home'));
         }
         return $next($request);
