@@ -230,4 +230,8 @@ return [
 
     ],
 
+
+    // Deployment
+
+    'deploy_secret' => env('APP_DEPLOY_SECRET'),
 ];
