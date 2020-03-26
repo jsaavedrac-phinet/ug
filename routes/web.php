@@ -10,7 +10,7 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+Route::post('deploy', 'DeployController@deploy');
 Route::get('/', function(){
 
     return redirect(route('login'));
