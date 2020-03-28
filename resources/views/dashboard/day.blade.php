@@ -24,6 +24,8 @@
 @section('styles')
 <link rel="stylesheet" href="{{asset('css/jquery-ui.css')}}" media="none" onload="if(media!='all')media='all'">
 <noscript><link rel="stylesheet" href="{{asset('css/jquery-ui.css')}}"></noscript>
+<link rel="stylesheet" href="{{asset('css/jquery-ui-timepicker-addon.css')}}" media="none" onload="if(media!='all')media='all'">
+<noscript><link rel="stylesheet" href="{{asset('css/jquery-ui-timepicker-addon.css')}}"></noscript>
 <style type="text/css">
 	input,select,textarea{-ms-box-sizing:content-box;-moz-box-sizing:content-box;-webkit-box-sizing:content-box;box-sizing:content-box;}
 	.header-content{display: flex; padding:  1em 0; font-size: 1.5em; align-items: flex-end; }
@@ -72,7 +74,7 @@
     }
 </script>
 <script type="text/javascript" src="{{ asset('js/jquery-ui.min.js') }}"></script>
-<script type="text/javascript" src="{{ asset('js/jquery-ui.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/jquery-ui-timepicker-addon.js') }}"></script>
 <script>
     $.datepicker.regional['es'] = {
        closeText: 'Cerrar',
@@ -95,7 +97,7 @@ $.datepicker.setDefaults($.datepicker.regional['es']);
 </script>
 <script type="text/javascript">
 $.datepicker.setDefaults($.datepicker.regional["es"]);
-   $('.timepicker').datepicker({ dateFormat: 'yy-mm-dd' });
+   $('.timepicker').datetimepicker({ dateFormat: 'yy-mm-dd ',timeFormat: 'HH:mm:ss'  });
 </script>
 <script type="text/javascript" src="{{ asset('js/ajax.js') }}"></script>
 @endsection

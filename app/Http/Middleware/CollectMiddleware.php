@@ -16,7 +16,8 @@ class CollectMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if(Auth::user()->isSponsoredCollectionDay() || Auth::user()->isAdminCollectionDay()){
+        return $next($request);
+        if(Auth::user()->isCollectionDay()){
             return $next($request);
         }
         return redirect(route('home'));

@@ -87,7 +87,7 @@ class User extends Authenticatable
     }
 
     public function isSecondCollectionDay(){
-        return Dates::between($this->firstCollect(),$this->limitFirstCollect(),session('day'));
+        return Dates::between($this->secondCollect(),$this->limitSecondCollect(),session('day'));
     }
 
     public function thirdCollect(){
@@ -98,28 +98,53 @@ class User extends Authenticatable
         return date('Y-m-d',strtotime('+1 day',strtotime($this->thirdCollect())));
     }
 
-    public function isThirddCollectionDay(){
-        return Dates::between($this->firstCollect(),$this->limitFirstCollect(),session('day'));
+    public function isThirdCollectionDay(){
+        return Dates::between($this->thirdCollect(),$this->limitThirdCollect(),session('day'));
     }
 
     public function isSponsoredCollectionDay(){
-        return ($this->role == 'sponsored') && ($this->isFirstCollectionDay() || $this->isSecondCollectionDay() ||$this->isThirddCollectionDay());
+        return ($this->role == 'sponsored') && ($this->isFirstCollectionDay());
     }
 
     public function isAdminCollectionDay(){
         return ($this->role == 'admin') && count($this->getDebtors(2,false)) > 0;
     }
 
-    public function firstReturnDay(){
+    public function isCollectionDay(){
+        return $this->role != 'superadmin' && ( $this->isSponsoredCollectionDay() ||$this->isAdminCollectionDay() );
+    }
+
+    public function isMonitorDay(){
+        return ($this->role == 'sponsored') && ($this->isSecondCollectionDay() || $this->isThirdCollectionDay());
+    }
+
+
+    public function firstReturn(){
         return date('Y-m-d',strtotime('+1 day',strtotime($this->limitFirstCollect())));
     }
 
-    public function thirdReturnDay(){
+    public function isFirstReturnDay(){
+        return Dates::between($this->firstReturn(),$this->firstReturn().'23:00:00',session('day'));
+    }
+
+    public function secondReturn(){
+        return date('Y-m-d',strtotime('+1 day',strtotime($this->limitSecondCollect())));
+    }
+
+    public function isSecondReturnDay(){
+        return Dates::between($this->secondReturn(),$this->secondReturn().'23:00:00',session('day'));
+    }
+
+    public function thirdReturn(){
         return date('Y-m-d',strtotime('+1 day',strtotime($this->limitThirdCollect())));
     }
 
-    public function secondReturnDay(){
-        return date('Y-m-d',strtotime('+1 day',strtotime($this->limitSecondCollect())));
+    public function isThirdDay(){
+        return Dates::between($this->thirdReturn(),$this->thirdReturn().'23:00:00',session('day'));
+    }
+
+    public function isReturnDay(){
+        return ($this->role == 'sponsored') && ($this->isFirstReturnDay() || $this->isSecondReturnDay() ||  $this->isThirdDay() );
     }
 
 
@@ -139,7 +164,6 @@ class User extends Authenticatable
                     return $element['level'] == $index - 1;
                 });
             }
-
             $aux_array = array_filter($debtors,function($element) use ($index){
                 return $element['level'] == $index - 1;
             });
@@ -149,26 +173,18 @@ class User extends Authenticatable
                     array_push($debtors,$object);
                 }
             }
-
         }
-
         if($aux == 1){
             if($delete_prev){
                 $debtors = array_filter($debtors,function($element) use ($index){
                     return $element['level'] == $index;
                 });
             }
-
-
             return array_map(function($element){ return $element['sponsored'];},array_unique($debtors,SORT_REGULAR)) ;
         }
         $aux--;
         $index++;
         return $this->getDebtors($aux,$delete_prev, $debtors,$index);
-
-
-
-
     }
 
     public function sponsor(){
@@ -180,6 +196,16 @@ class User extends Authenticatable
     }
 
     public function whoToPay(){
+        $sponsor = $this;
+        for ($i=0; $i <3 ; $i++) {
+            if( $sponsor->sponsor && $sponsor->role != 'admin'){
+                $sponsor =$sponsor->sponsor;
+            }
+        }
+        return $sponsor;
+    }
+
+    public function whoToPayFirstReturn(){
         $sponsor = $this;
         for ($i=0; $i <3 ; $i++) {
             if( $sponsor->sponsor && $sponsor->role != 'admin'){

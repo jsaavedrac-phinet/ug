@@ -3,36 +3,26 @@
 
 @section('content')
 <div class="header-content">
-    @if (Auth::user()->id != request()->route('user')->id)
-    <div class="title-content">Rama de : {{  request()->route('user')->full_name}}</div>
+    @if (Auth::user()->role == 'admin' && Auth::user()->group)
+    <div class="title-content">{{ $data['title']  }} del Grupo: {{ Auth::user()->group->name }}</div>
     @else
     <div class="title-content">{{ $data['title']  }}</div>
     @endif
-    <div class="extra-content">
-        Estados :
-        <ol>
-            <li>REGISTRADO : El usuario ha sido registrado pero aun no ha pagado</li>
-            <li>PAGO : El usuario ha pagado su registro</li>
-            <li>RETORNO 1 : El usuario ha hecho su primera devolucion (50%)</li>
-            <li>RETORNO 2 : El usuario ha hecho su segunda devolucion (50%)</li>
-            <li>RETORNO 3 : El usuario ha hecho su tercera devolucion (10%)</li>
-            <li>NO PAGO : El usuario no pago su registro, y se deshabilito su usuario y a su rama.</li>
-            <li>NO RETORNO 1 : El usuario no pago su primer retorno, y se deshabilito su usuario y a su rama.</li>
-            <li>NO RETORNO 2 : El usuario no pago su segundo retorno, y se deshabilito su usuario y a su rama.</li>
-            <li>NO RETORNO 3 : El usuario no pago su tercer retorno, y se deshabilito su usuario y a su rama.</li>
-        </ol>
-    </div>
 </div>
-
 <div class="body-content">
 	@if (count($data['array']) >0)
 	<table>
-		<caption>Total : {{ count($data['array']) }}</caption>
 		<thead>
 			<tr>
                 <th>NOMBRE</th>
                 <th>
-                    ESTADO
+                    TELEFONO
+                </th>
+                <th>
+                    PAG&Oacute;?
+                </th>
+                <th>
+                    FECHA LIMITE
                 </th>
 
 				<th width="50%" >ACCIONES</th>
@@ -45,31 +35,40 @@
                     {!! $item->full_name !!}
                 </td>
                 <td>
-                    {{ $item->getState() }}
+                    {{ $item->phone }}
+                </td>
+
+                <td>
+                    <form action="{{ route('payment', $item->id) }}">
+                        @method('POST')
+                        <button class="btn" type="submit"><i class="fas fa-toggle-{{ $item->payment() ? 'on' : 'off'  }}"></i></button>
+					</form>
+                </td>
+                <td>
+                    {{ $item->limitToPay()  }}
                 </td>
 				<td class="acciones">
-                    <a class="btn btn-edit" href="{{ route('branch', $item->id) }}" target="_blank"><i class="fas fa-sitemap"></i></a>
-                    <a class="btn btn-view" href="{{ route('user.show', $item->id) }}" target="_blank"><i class="fas fa-eye"></i></a>
+                    <a class="btn btn-view" href="{{ route('user.show', $item->id) }}"><i class="fas fa-eye"></i></a>
  				</td>
 			</tr>
 			@endforeach
 
 		</tbody>
     </table>
-    @if (Auth()->user()->role != 'superadmin' && gettype($data['array']) != 'array' )
-    <div class="paginado">
+    @if (gettype($data['array']) != 'array')
+    <div class="paginator">
 		{{ $data['array']->links() }}
 	</div>
     @endif
 
 	@else
-	<h2>NO HAY USUARIOS REGISTRADOS</h2>
+	<h2>NO HAY USUARIOS QUE LES TOQUE COBRAR, REVISA TU RAMA</h2>
 	@endif
 </div>
 @endsection
 @section('styles')
 <style type="text/css">
-.paginado{width: 100%; margin: 1em 0;  display: -ms-flexbox;display: flex; justify-content: center;}
+.paginator{width: 100%; margin: 1em 0;  display: -ms-flexbox;display: flex; justify-content: center;}
 .pagination {display: -ms-flexbox;display: flex;padding-left: 0;list-style: none;border-radius: .25rem;}
 .page-item:first-child .page-link {margin-left: 0;border-top-left-radius: .25rem;border-bottom-left-radius: .25rem;}
 .page-item.active .page-link {z-index: 1;color: #fff;background-color: var(--principal);border-color: var(--btn-success);}
@@ -80,8 +79,7 @@
 	.header-content{display: flex; padding:  1em 0; font-size: 1.5em; align-items: flex-end; flex-wrap: wrap; }
 	.header-content .icon-content{margin-right: 0.5em;font-size: 1.4em;}
 	.header-content .title-content{letter-spacing: 1px;}
-	.header-content .extra-content{letter-spacing: 1px; width: calc(100% - 2em); margin: 2em 1em;font-size: 0.7em;}
-	.header-content .extra-content ol li{list-style: none;}
+	.header-content .extra-content{letter-spacing: 1px; width: 100%; margin: 2em 0;}
 	.header-content .actions-content{margin-left: 2em; display: flex; height:100%; width: auto;}
 	.header-content .actions-content a:nth-of-type(n+2){margin-left: 0.5em;}
 	.header-content .actions-content a{height: 100%; display: flex; justify-content: space-between; align-items: center; width: auto; color: #FFF; background: #ccc; cursor: pointer; font-size: 0.6em; text-decoration: none; }

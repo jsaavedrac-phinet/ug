@@ -24,7 +24,7 @@ class DayRequest extends FormRequest
     public function rules()
     {
         return [
-            'day'   =>'required|date|date_format:Y-m-d'
+            'day'   =>'required|date'
         ];
     }
 

@@ -49,4 +49,8 @@ class Dates{
         $date = new Carbon($date);
         return $date->isoFormat('dddd\, D \d\e MMMM \d\e\l G');
     }
+
+    public static function atTime($date,$time,$now){
+        return strtotime($now) <= strtotime($date.' '.$time);
+    }
 }

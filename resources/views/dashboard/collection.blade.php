@@ -12,12 +12,11 @@
 <div class="body-content">
 	@if (count($data['array']) >0)
 	<table>
-		<caption>Total : {{ count($data['array']) }}</caption>
 		<thead>
 			<tr>
                 <th>NOMBRE</th>
                 <th>
-                    ESTADO
+                    TELEFONO
                 </th>
                 <th>
                     PAG&Oacute;?
@@ -36,7 +35,7 @@
                     {!! $item->full_name !!}
                 </td>
                 <td>
-                    {{ $item->getState() }}
+                    {{ $item->phone }}
                 </td>
 
                 <td>
@@ -55,14 +54,28 @@
 			@endforeach
 
 		</tbody>
-	</table>
+    </table>
+    @if (gettype($data['array']) != 'array')
+    <div class="paginator">
+		{{ $data['array']->links() }}
+	</div>
+    @endif
+
 	@else
-	<h2>NO HAY USUARIOS REGISTRADOS</h2>
+	<h2>NO HAY USUARIOS PARA COBRAR, REVISA TU RAMA</h2>
 	@endif
 </div>
 @endsection
 @section('styles')
 <style type="text/css">
+.paginator{width: 100%; margin: 1em 0;  display: -ms-flexbox;display: flex; justify-content: center;}
+.pagination {display: -ms-flexbox;display: flex;padding-left: 0;list-style: none;border-radius: .25rem;}
+.page-item:first-child .page-link {margin-left: 0;border-top-left-radius: .25rem;border-bottom-left-radius: .25rem;}
+.page-item.active .page-link {z-index: 1;color: #fff;background-color: var(--principal);border-color: var(--btn-success);}
+.page-link {position: relative;display: block;padding: .5rem .75rem;margin-left: -1px;line-height: 1.25;color: var(--verde);background-color: #fff;border: 1px solid #dee2e6;}
+.page-item:last-child .page-link {border-top-right-radius: .25rem;border-bottom-right-radius: .25rem;}
+.page-link {position: relative;display: block;padding: .5rem .75rem;margin-left: -1px;line-height: 1.25;color: var(--verde);background-color: #fff;border: 1px solid #dee2e6;}
+.page-link:hover {z-index: 2;color: var(--btn-success);text-decoration: none;background-color: #e9ecef;border-color: #dee2e6;}
 	.header-content{display: flex; padding:  1em 0; font-size: 1.5em; align-items: flex-end; flex-wrap: wrap; }
 	.header-content .icon-content{margin-right: 0.5em;font-size: 1.4em;}
 	.header-content .title-content{letter-spacing: 1px;}

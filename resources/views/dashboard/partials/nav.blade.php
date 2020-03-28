@@ -36,16 +36,31 @@
                 <div class="nav-titulo">Usuarios</div>
             </a>
         </li>
-
-        @if (Auth()->user()->role != 'superadmin')
-        @if ( Auth::user()->isSponsoredCollectionDay() ||Auth::user()->isAdminCollectionDay() )
-        <li>
-            <a href="{{ route('collect') }}">
-                <i class="fas fa-comments-dollar"></i>
-                <div class="nav-titulo">Cobranzas</div>
-            </a>
-        </li>
+        @if (Auth()->user()->isCollectionDay())
+            <li>
+                <a href="{{ route('collect') }}">
+                    <i class="fas fa-comments-dollar"></i>
+                    <div class="nav-titulo">Cobranzas</div>
+                </a>
+            </li>
         @endif
+
+        @if (Auth()->user()->isMonitorDay())
+            <li>
+                <a href="{{ route('monitor') }}">
+                    <i class="fas fa-user-clock"></i>
+                    <div class="nav-titulo">Ayuda a tu rama</div>
+                </a>
+            </li>
+        @endif
+
+        @if (Auth()->user()->isReturnDay())
+            <li>
+                <a href="">
+                    <i class="fas fa-hand-holding-usd"></i>
+                    <div class="nav-titulo">Devoluci&oacute;n</div>
+                </a>
+            </li>
         @endif
 
         <li>
@@ -63,6 +78,8 @@
             </a>
         </li>
         @endif
+
+
 
 
     </ul>

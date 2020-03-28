@@ -9,7 +9,9 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 class DashboardController extends Controller
 {
     public function __construct()
@@ -79,13 +81,22 @@ class DashboardController extends Controller
     }
 
     public function collect(){
-        $data['title'] = 'Listado de Patrocinados';
-
-
+        $data['title'] = 'Lista de Usuarios por Cobrar';
         if(Auth::user()->role == 'sponsored'){
             if(Auth::user()->isFirstCollectionDay()){
                 $data['array'] = Auth::user()->getDebtors(3,true);
             }
+        }
+        if(Auth::user()->role == 'admin'){
+            $data['array'] =$this->paginate(Auth::user()->getDebtors(2,false),70);
+            $data['array']->withPath('collect');
+        }
+        return view('dashboard.collection')->with('data',$data);
+    }
+
+    public function monitor(){
+        $data['title'] = 'Lista de usuarios que estan cobrando, ayúdalos!';
+        if(Auth::user()->role == 'sponsored'){
             if(Auth::user()->isSecondCollectionDay()){
                 $data['array'] = Auth::user()->getDebtors(6,true);
             }
@@ -93,22 +104,20 @@ class DashboardController extends Controller
                 $data['array'] = Auth::user()->getDebtors(9,true);
             }
         }
+        return view('dashboard.monitor')->with('data',$data);
+    }
 
-        if(Auth::user()->role == 'admin'){
-            $data['array'] = Auth::user()->getDebtors(2,false);
-        }
-
-
-
-
-        return view('dashboard.collection')->with('data',$data);
+    public function paginate($items, $perPage = 5, $page = null, $options = []){
+        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof Collection ? $items : Collection::make($items);
+        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
 
     public function branch(User $user){
         $data['title'] = 'Mi rama';
         $data['array'] =$user->getDebtors(9,false);
         if($user->role == 'superadmin'){
-            $data['array'] = User::orderBy('id','DESC')->where('role','<>','superadmin')->paginate(10);
+            $data['array'] = User::orderBy('id','DESC')->where('role','<>','superadmin')->paginate(2);
         }
 
         if($user->role == 'admin'){
