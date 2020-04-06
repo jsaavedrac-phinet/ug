@@ -35,6 +35,7 @@ class DashboardController extends Controller
             DB::beginTransaction();
             try {
                 Auth::user()->full_name = $request->full_name;
+                Auth::user()->bank_account_number = $request->bank_account_number;
 
                 $login = false;
                 if ($request->password != "") {
