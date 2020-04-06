@@ -3,22 +3,15 @@
 
 @section('content')
 <div class="header-content">
-    @if (Auth::user()->role == 'admin' && Auth::user()->group)
-    <div class="title-content">{{ $data['title']  }} del Grupo: {{ Auth::user()->group->name }}</div>
-    @else
-    <div class="title-content">{{ $data['title']  }}</div>
-    @endif
+	<div class="title-content">{{ $data['title']  }}</div>
 </div>
 <div class="body-content">
 	@if (count($data['array']) >0)
 	<table>
+		<caption>Total : {{ count($data['array']) }}</caption>
 		<thead>
 			<tr>
                 <th>NOMBRE</th>
-                <th>
-                    TELEFONO
-                </th>
-
 				<th width="50%" >ACCIONES</th>
 			</tr>
 		</thead>
@@ -26,44 +19,27 @@
 			@foreach ($data['array'] as  $key =>$item)
 			<tr>
                 <td style="text-overflow:ellipsis; overflow:hidden">
-                    {!! $item->full_name !!}
+                    {!! $item->name !!}
                 </td>
-                <td>
-                    {{ $item->phone }}
-                </td>
+
 				<td class="acciones">
-                    <a class="btn btn-view" href="{{ route('user.show', $item->id) }}"><i class="fas fa-eye"></i></a>
- 				</td>
+                    <a class="btn btn-edit" href="{{ route('colorSetting.edit', $item->id) }}"><i class="fas fa-edit"></i></a>
+				</td>
 			</tr>
 			@endforeach
 
 		</tbody>
-    </table>
-    @if (gettype($data['array']) != 'array')
-    <div class="paginator">
-		{{ $data['array']->links() }}
-	</div>
-    @endif
-
+	</table>
 	@else
-	<h2>NO HAY USUARIOS QUE LES TOQUE COBRAR, REVISA TU RAMA</h2>
+	<h2>NO HAY GRUPOS REGISTRADOS</h2>
 	@endif
 </div>
 @endsection
 @section('styles')
 <style type="text/css">
-.paginator{width: 100%; margin: 1em 0;  display: -ms-flexbox;display: flex; justify-content: center;}
-.pagination {display: -ms-flexbox;display: flex;padding-left: 0;list-style: none;border-radius: .25rem;}
-.page-item:first-child .page-link {margin-left: 0;border-top-left-radius: .25rem;border-bottom-left-radius: .25rem;}
-.page-item.active .page-link {z-index: 1;color: #fff;background-color: var(--principal);border-color: var(--btn-success);}
-.page-link {position: relative;display: block;padding: .5rem .75rem;margin-left: -1px;line-height: 1.25;color: var(--verde);background-color: #fff;border: 1px solid #dee2e6;}
-.page-item:last-child .page-link {border-top-right-radius: .25rem;border-bottom-right-radius: .25rem;}
-.page-link {position: relative;display: block;padding: .5rem .75rem;margin-left: -1px;line-height: 1.25;color: var(--verde);background-color: #fff;border: 1px solid #dee2e6;}
-.page-link:hover {z-index: 2;color: var(--btn-success);text-decoration: none;background-color: #e9ecef;border-color: #dee2e6;}
-	.header-content{display: flex; padding:  1em 0; font-size: 1.5em; align-items: flex-end; flex-wrap: wrap; }
+	.header-content{display: flex; padding:  1em 0; font-size: 1.5em; align-items: flex-end; }
 	.header-content .icon-content{margin-right: 0.5em;font-size: 1.4em;}
 	.header-content .title-content{letter-spacing: 1px;}
-	.header-content .extra-content{letter-spacing: 1px; width: 100%; margin: 2em 0;}
 	.header-content .actions-content{margin-left: 2em; display: flex; height:100%; width: auto;}
 	.header-content .actions-content a:nth-of-type(n+2){margin-left: 0.5em;}
 	.header-content .actions-content a{height: 100%; display: flex; justify-content: space-between; align-items: center; width: auto; color: #FFF; background: #ccc; cursor: pointer; font-size: 0.6em; text-decoration: none; }

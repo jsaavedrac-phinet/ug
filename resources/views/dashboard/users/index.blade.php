@@ -68,11 +68,14 @@
 
 				<td class="acciones">
                     <a class="btn btn-view" href="{{ route('user.show', $item->id) }}"><i class="fas fa-eye"></i></a>
+                    @if (Auth()->user()->role == 'superadmin')
                     <a class="btn btn-edit" href="{{ route('user.edit', $item->id) }}"><i class="fas fa-edit"></i></a>
                     <form action="{{ route('user.destroy', $item->id) }}">
                         @method('DELETE')
                         <button class="btn btn-delete" type="submit"><i class="fas fa-trash-alt"></i>&nbsp;</button>
 					</form>
+                    @endif
+
 				</td>
 			</tr>
 			@endforeach

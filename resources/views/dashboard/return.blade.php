@@ -3,12 +3,32 @@
 
 @section('content')
 <div class="header-content">
-    @if (Auth::user()->role == 'admin' && Auth::user()->group)
-    <div class="title-content">{{ $data['title']  }} del Grupo: {{ Auth::user()->group->name }}</div>
-    @else
-    <div class="title-content">{{ $data['title']  }}</div>
+    @if (Auth::user()->role == 'sponsored')
+    <div class="extra-content">
+        <p>
+            Hoy es tu fecha l&iacute;mite de devoluci&oacute;n.
+            <br>
+            Tienes hasta las 11 pm para coordinar el pago con :
+
+            <br><br>
+            <strong>Nombre : </strong> {{ Auth::user()->whoToPay()->full_name }}<br><br>
+            <strong>Tel&eacute;fono :</strong> {{ Auth::user()->whoToPay()->phone }}<br><br>
+            @if (Auth()->user()->isFirstReturnDay())
+            <strong>El 50% de retorno equivale a :</strong> S/. {{ number_format(Auth::user()->fee(),2) }}
+            @endif
+            <br><br>
+            <strong>Cuenta Bancaria :</strong> {{ Auth::user()->whoToPay()->bank_account_number }}<br><br>
+            <br><br><br>
+            <strong>Si es que no pagas, se dar&aacute; de baja a tu cuenta.</strong>
+        </p>
+    </div>
+    @endif
+
+    @if (count($data['array'])> 0)
+        <div class="title-content">{{ $data['title']  }}</div>
     @endif
 </div>
+
 <div class="body-content">
 	@if (count($data['array']) >0)
 	<table>
@@ -18,7 +38,15 @@
                 <th>
                     TELEFONO
                 </th>
-
+                <th>
+                    RETORN&Oacute;?
+                </th>
+                <th>
+                    CANTIDAD QUE DEBERIA
+                </th>
+                <th>
+                    LO QUE HAY HASTA EL MOMENTO
+                </th>
 				<th width="50%" >ACCIONES</th>
 			</tr>
 		</thead>
@@ -31,23 +59,24 @@
                 <td>
                     {{ $item->phone }}
                 </td>
-				<td class="acciones">
+                <td>
+                    <form action="{{ route('update_return', $item->id) }}">
+                        @method('POST')
+                        <button class="btn" type="submit"><i class="fas fa-toggle-{{ $item->return() ? 'on' : 'off'  }}"></i></button>
+					</form>
+                </td>
+                <td>{{ number_format($item->fee(),2) }}</td>
+                <td>{{ number_format($item->realFee(),2) }}</td>
+ 				<td class="acciones">
                     <a class="btn btn-view" href="{{ route('user.show', $item->id) }}"><i class="fas fa-eye"></i></a>
+                    <a class="btn btn-edit" href="{{ route('branch', $item->id) }}" target="_blank"><i class="fas fa-sitemap"></i></a>
  				</td>
 			</tr>
 			@endforeach
 
 		</tbody>
     </table>
-    @if (gettype($data['array']) != 'array')
-    <div class="paginator">
-		{{ $data['array']->links() }}
-	</div>
-    @endif
-
-	@else
-	<h2>NO HAY USUARIOS QUE LES TOQUE COBRAR, REVISA TU RAMA</h2>
-	@endif
+@endif
 </div>
 @endsection
 @section('styles')

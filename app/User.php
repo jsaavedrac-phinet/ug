@@ -17,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'full_name', 'dni', 'phone','bank_account_number','state','access','user','password','role','sponsor_id','group_id','admin_id'
+        'full_name', 'dni', 'phone','bank_account_number','state','access','user','password','role','sponsor_id','group_id','admin_id','id'
     ];
 
     /**
@@ -39,7 +39,7 @@ class User extends Authenticatable
     ];
 
     public function sponsored(){
-        return $this->hasMany('App\User','sponsor_id');
+        return $this->hasMany('App\User','sponsor_id')->orderBy('id','ASC');
     }
 
     public function admin(){
@@ -139,12 +139,41 @@ class User extends Authenticatable
         return date('Y-m-d',strtotime('+1 day',strtotime($this->limitThirdCollect())));
     }
 
-    public function isThirdDay(){
+    public function isThirdReturnDay(){
         return Dates::between($this->thirdReturn(),$this->thirdReturn().'23:00:00',session('day'));
     }
 
     public function isReturnDay(){
-        return ($this->role == 'sponsored') && ($this->isFirstReturnDay() || $this->isSecondReturnDay() ||  $this->isThirdDay() );
+        return ($this->role == 'sponsored' && ($this->isFirstReturnDay() || $this->isSecondReturnDay() ||  $this->isThirdReturnDay() ) ) || ($this->role == 'admin' && $this->existsPioneersToReturn());
+    }
+
+    public function pioneersToReturn(){
+        $day = Dates::getNameDay(session('day'));
+        $pioneers = [];
+        if($day == 'Miercoles' || $day == 'Sabado'){
+
+            $pioneers = User::where([
+                ['id','<>',$this->id],
+                ['sponsor_id',$this->id],
+                ['role','sponsored']
+                ])
+                ->where(function($query){
+                    $query
+                    ->where('created_at','=',date('Y-m-d',strtotime('13 days ago',strtotime(session('day')))))
+                    ->orWhere('created_at','=',date('Y-m-d',strtotime('12 days ago',strtotime(session('day')))))
+                    ->orwhere('created_at','=',date('Y-m-d',strtotime('23 days ago',strtotime(session('day')))))
+                    ->orWhere('created_at','=',date('Y-m-d',strtotime('22 days ago',strtotime(session('day')))))
+                    ->orWhere('created_at','=',date('Y-m-d',strtotime('34 days ago',strtotime(session('day')))))
+                    ->orWhere('created_at','=',date('Y-m-d',strtotime('33 days ago',strtotime(session('day')))));
+                })
+            ->orderBy('id','DESC')->get();
+
+        }
+        return $pioneers;
+    }
+
+    public function existsPioneersToReturn(){
+        return (count($this->pioneersToReturn()) > 0);
     }
 
 
@@ -153,7 +182,7 @@ class User extends Authenticatable
 
         if(count($debtors) == 0 && count($this->sponsored) > 0 && $index == 0){
             foreach ($this->sponsored as $key => $value) {
-                $object = ['level' => $index, 'sponsored' => $value];
+                $object = ['level' => $index, 'sponsored' => $value,'key' => $key ];
                 array_push($debtors,$object);
             }
         }
@@ -167,9 +196,10 @@ class User extends Authenticatable
             $aux_array = array_filter($debtors,function($element) use ($index){
                 return $element['level'] == $index - 1;
             });
+            $ref = 0;
             foreach ($aux_array as $value) {
                 foreach ($value['sponsored']->sponsored as $key => $sponsored) {
-                    $object = ['level' => $index, 'sponsored' => $sponsored];
+                    $object = ['level' => $index, 'sponsored' => $sponsored,'key' => $ref++];
                     array_push($debtors,$object);
                 }
             }
@@ -185,6 +215,88 @@ class User extends Authenticatable
         $aux--;
         $index++;
         return $this->getDebtors($aux,$delete_prev, $debtors,$index);
+    }
+
+    public function fee(){
+        $fee = 0;
+
+        if($this->isFirstReturnDay()){
+            return array_reduce($this->getDebtors(3,true),function($carry, $item){
+                if($item->state == 'payed' ||$item->state == 'registered'){
+                    return $carry += $item->group->fee;
+                }
+            })*0.50;
+        }
+        if($this->isSecondReturnDay()){
+            return array_reduce($this->getDebtors(3,true),function($carry, $item){
+                if($item->state == 'payed' ||$item->state == 'return-1'){
+                    return $carry += $item->group->fee;
+                }
+            })*0.50;
+        }
+        if($this->isThirdReturnDay()){
+            return array_reduce($this->getDebtors(3,true),function($carry, $item){
+                if($item->state == 'return-1' || $item->state == 'return-2'){
+                    return $carry += $item->group->fee;
+                }
+            })*0.10;
+        }
+
+        return $fee;
+    }
+
+    public function realFee(){
+        $fee = 0;
+
+        if($this->isFirstReturnDay()){
+            return array_reduce($this->getDebtors(3,true),function($carry, $item){
+                if($item->state == 'payed'){
+                    return $carry += $item->group->fee;
+                }
+                return $carry;
+            })*0.50;
+        }
+        if($this->isSecondReturnDay()){
+            return array_reduce($this->getDebtors(3,true),function($carry, $item){
+                if($item->state == 'return-1'){
+                    return $carry += $item->group->fee;
+                }
+                return $carry;
+            })*0.50;
+        }
+        if($this->isThirdReturnDay()){
+            return array_reduce($this->getDebtors(3,true),function($carry, $item){
+                if($item->state == 'return-2'){
+                    return $carry += $item->group->fee;
+                }
+                return $carry;
+            })*0.10;
+        }
+
+        return $fee;
+    }
+
+    public function return(){
+        return (($this->isFirstReturnDay() && $this->state == 'return-1' ) || ($this->isSecondReturnDay() && $this->state == 'return-2') || ($this->isThirdReturnDay() && $this->state == 'return-3'));
+    }
+
+
+    public function getDebtorsChildren($items,$limit){
+        $childrens = '';
+        if ($limit < 10 && $items != null) {
+            $childrens .= '<ul>';
+            foreach ($items as $value) {
+                $childrens.='<li><span id="'.$value->id.'" class="'.$value->state.'"><h3>'.$value->full_name.'</h3><div class="actions"><a class="btn btn-edit" href="'.route('branch', $value->id).'" target="_blank"><i class="fas fa-sitemap"></i></a><a class="btn btn-view" href="'.route('user.show', $value->id).'"target="_blank"><i class="fas fa-eye"></i></a></div></span>';
+
+                $childrens .= count($value->sponsored) >0 ? $this->getDebtorsChildren($value->sponsored,++$limit)  : '</li>';
+            }
+            $childrens .='</ul>';
+        }
+        return $childrens;
+    }
+
+    public function getDebtorsTree($parent, $limit = 0){
+        return '<ul class="tree"><span class="master" id="'. $parent->id.'">'.$parent->full_name.'</span>'.$this->getDebtorsChildren($parent->sponsored,$limit).'</ul>';
     }
 
     public function sponsor(){
@@ -233,7 +345,16 @@ class User extends Authenticatable
                 return 'REGISTRADO';
                 break;
             case 'payed':
-                return 'HA PAGADO';
+                return 'PAGÓ';
+            break;
+            case 'return-1':
+                return 'RETORNO 1';
+            break;
+            case 'return-2':
+                return 'RETORNO 2';
+            break;
+            case 'return-3':
+                return 'RETORNO 3';
             break;
             case 'disabled':
                 return 'DESHABILITADO';
@@ -287,4 +408,5 @@ class User extends Authenticatable
     public function canAdd(){
         return ($this->role =='superadmin' || ($this->role == 'admin' && Dates::canRegister()) || ($this->role == 'sponsored' && Dates::canRegister() && $this->sponsored->count() < $this->group->branch && $this->isMyRegisterDay()));
     }
+
 }

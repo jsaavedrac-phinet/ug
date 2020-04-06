@@ -23,6 +23,12 @@
         @endif
         @if (Auth()->user()->role == 'superadmin')
         <li>
+            <a href="{{ route('colorSetting.index') }}">
+                <i class="fas fa-palette"></i>
+                <div class="nav-titulo">Colores</div>
+            </a>
+        </li>
+        <li>
             <a href="{{ route('group.index') }}">
                 <i class="fas fa-sitemap"></i>
                 <div class="nav-titulo">Grupos</div>
@@ -56,7 +62,7 @@
 
         @if (Auth()->user()->isReturnDay())
             <li>
-                <a href="">
+                <a href="{{ route('return') }}">
                     <i class="fas fa-hand-holding-usd"></i>
                     <div class="nav-titulo">Devoluci&oacute;n</div>
                 </a>

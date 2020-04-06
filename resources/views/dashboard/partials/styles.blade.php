@@ -21,6 +21,10 @@
 		--btn-danger:#fa2a00;
 		--btn-primary:#22a7f0;
         --btn-view:#FFDC00;
+        @foreach ($colors as $color)
+        --color-{{$color->css}} : {{ $color->color }} ;
+        --bg-{{$color->css}} : {{ $color->background }} ;
+        @endforeach
 
 	}
 	.nav{transition: width .5s,-webkit-transform .5s;transition: width .5s,transform .5s;transition: width .5s,transform .5s,-webkit-transform .5s;   transition-timing-function: ease, ease, ease;}
@@ -98,6 +102,7 @@
 	.contenedor footer{width: calc(100% - 2em);padding: 0 1em;  height: 45px; display: flex; justify-content: flex-end; align-items: center;}
     img{background: gray;}
     .icono-menu{width: 20px;height: 20px;text-align: center;cursor: pointer;}
+    #container{height:calc(100vh - 150px)}
 	/* critico para celular*/
 	@media (max-width: 767px){
 		.contenedor.extended{padding-top: 54.6px; padding-left: calc(var(--ancho-menu) + 1em); padding-right: 1em; width: calc(100% - 2em - var(--ancho-menu)); min-height: calc(100vh - 112px);}

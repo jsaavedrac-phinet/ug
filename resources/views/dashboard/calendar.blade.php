@@ -36,7 +36,7 @@
 			</tr>
             <tr>
                 <td style="text-overflow:ellipsis; overflow:hidden">PRIMERA DEVOLUCION 50%</td>
-                <td>{{ \App\Helpers\Dates::transform(Auth()->user()->firstReturnDay()) }}</td>
+                <td>{{ \App\Helpers\Dates::transform(Auth()->user()->firstReturn()) }}</td>
 			</tr>
             <tr>
                 <td style="text-overflow:ellipsis; overflow:hidden">PRIMER DIA DEL 2º COBRO</td>
@@ -48,7 +48,7 @@
 			</tr>
             <tr>
                 <td style="text-overflow:ellipsis; overflow:hidden">SEGUNDA DEVOLUCION 50%</td>
-                <td>{{ \App\Helpers\Dates::transform(Auth()->user()->secondReturnDay()) }}</td>
+                <td>{{ \App\Helpers\Dates::transform(Auth()->user()->secondReturn()) }}</td>
 			</tr>
             <tr>
                 <td style="text-overflow:ellipsis; overflow:hidden">PRIMER DIA DEL 3º COBRO</td>
@@ -60,7 +60,7 @@
 			</tr>
             <tr>
                 <td style="text-overflow:ellipsis; overflow:hidden">TERCERA DEVOLUCION 10%</td>
-                <td>{{ \App\Helpers\Dates::transform(Auth()->user()->thirdReturnDay()) }}</td>
+                <td>{{ \App\Helpers\Dates::transform(Auth()->user()->thirdReturn()) }}</td>
 			</tr>
 		</tbody>
 	</table>

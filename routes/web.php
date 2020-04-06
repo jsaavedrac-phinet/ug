@@ -27,13 +27,18 @@ Route::middleware(['auth'])->group(function(){
 
     Route::middleware('superadmin')->group(function(){
         Route::resource('group', 'GroupController');
+        Route::resource('colorSetting','ColorSettingController');
+        Route::get('/user/{user}/edit','UserController@edit')->name('user.edit');
+        Route::put('/user/{user}','UserController@update')->name('user.update');
+        Route::delete('/user/{user}','UserController@destroy')->name('user.destroy');
+
     });
 
     Route::group(['middleware' => ['user.add']], function () {
         Route::get('/user/create','UserController@create')->name('user.create');
         Route::post('/user','UserController@store')->name('user.store');
     });
-    Route::resource('user', 'UserController')->except(['create','store']);
+    Route::resource('user', 'UserController')->except(['create','store','edit','update','destroy']);
 
     Route::get('repayment','DashboardController@repayment')->name('repayment');
     Route::post('payment/{user}','DashboardController@payment')->name('payment');
@@ -51,5 +56,9 @@ Route::middleware(['auth'])->group(function(){
 
     Route::get('/branch/{user}','DashboardController@branch')->name('branch');
     Route::get('/calendar','DashboardController@calendar')->name('calendar');
+
+    Route::get('/return','DashboardController@return')->name('return');
+    Route::post('/return/{user}','DashboardController@update_return')->name('update_return');
+
 
 });

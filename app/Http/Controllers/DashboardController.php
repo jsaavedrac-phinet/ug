@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\ColorSetting;
 use App\Helpers\Dates;
 use App\Http\Requests\DayRequest;
 use App\Http\Requests\UpdateUserRequest;
@@ -98,14 +99,15 @@ class DashboardController extends Controller
         $data['title'] = 'Lista de usuarios que estan cobrando, ayúdalos!';
         if(Auth::user()->role == 'sponsored'){
             if(Auth::user()->isSecondCollectionDay()){
-                $data['array'] = Auth::user()->getDebtors(6,true);
+                $data['array'] = Auth::user()->getDebtors(3,true);
             }
             if(Auth::user()->isThirdCollectionDay()){
-                $data['array'] = Auth::user()->getDebtors(9,true);
+                $data['array'] = Auth::user()->getDebtors(3,true);
             }
         }
         return view('dashboard.monitor')->with('data',$data);
     }
+
 
     public function paginate($items, $perPage = 5, $page = null, $options = []){
         $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
@@ -117,15 +119,18 @@ class DashboardController extends Controller
         $data['title'] = 'Mi rama';
         $data['array'] =$user->getDebtors(9,false);
         if($user->role == 'superadmin'){
-            $data['array'] = User::orderBy('id','DESC')->where('role','<>','superadmin')->paginate(2);
+            $data['array'] = User::orderBy('id','DESC')->where('role','<>','superadmin')->paginate(70);
         }
 
         if($user->role == 'admin'){
-            $data['array'] = User::orderBy('id','DESC')->where('admin_id',Auth::user()->id)->paginate(2);
+            $data['array'] = User::orderBy('id','DESC')->where('admin_id','=',$user->id)->paginate(70);
         }
 
 
-
+        if($user->role == 'sponsored'){
+            $data['array'] = $user->getDebtorsTree($user);
+            return view('dashboard.branchTree')->with('data',$data);
+        }
         return view('dashboard.branch')->with('data',$data);
     }
 
@@ -134,4 +139,42 @@ class DashboardController extends Controller
         $data['title'] = 'Mi calendario';
         return view('dashboard.calendar')->with('data',$data);
     }
+
+    public function return(){
+        $data['title'] = 'Lista de Usuarios por Cobrar';
+        $data['array'] = [];
+        if(Auth::user()->isSecondReturnDay()){
+            $data['array'] = array_filter(Auth::user()->getDebtors(3,true),function($element){ return ($element->state == 'payed' || $element->state == 'return-1')  ? true : false;});
+        }
+        if(Auth::user()->isThirdReturnDay()){
+            $data['array'] = array_filter(Auth::user()->getDebtors(3,true),function($element){ return ($element->state == 'return-1' ||$element->state == 'return-2')  ? true : false;});
+        }
+
+        if(Auth::user()->role == 'admin'){
+            $data['array'] = Auth::user()->pioneersToReturn();
+        }
+
+
+        return view('dashboard.return')->with('data',$data);
+    }
+
+    public function update_return(User $user){
+        if($user->isFirstReturnDay()){
+            $user->state = ($user->state == 'return-1') ? 'payed' : 'return-1';
+        }
+        if($user->isSecondReturnDay()){
+            $user->state = ($user->state == 'return-2') ? 'return-1' : 'return-2';
+        }
+        if($user->isThirdReturnDay()){
+            $user->state = ($user->state == 'return-3') ? 'return-2' : 'return-3';
+        }
+
+
+
+
+        $user->save();
+        return response(['message' => 'Estado actualizado con éxito','function' =>'reload']);
+
+    }
+
 }

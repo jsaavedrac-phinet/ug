@@ -66,6 +66,7 @@ class Kernel extends HttpKernel
         'debug'         => \App\Http\Middleware\DebugMiddleware::class,
         'user.add'      =>  \App\Http\Middleware\AddUserMiddleware::class,
         'collect'       => \App\Http\Middleware\CollectMiddleware::class,
+        'admin.pioneers'=> \App\Http\Middleware\PioneerReturnMiddleware::class,
     ];
 
     /**
