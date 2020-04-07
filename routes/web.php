@@ -19,7 +19,7 @@ Route::get('/', function(){
 Auth::routes(['register' => false]);
 
 
-Route::middleware(['auth'])->group(function(){
+Route::middleware(['auth','access'])->group(function(){
     Route::get('/home','DashboardController@home')->name('home');
     Route::get('/profile','DashboardController@profile')->name('profile');
     Route::post('/profile','DashboardController@update_profile')->name('update_profile');

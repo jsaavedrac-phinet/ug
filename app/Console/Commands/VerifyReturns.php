@@ -74,16 +74,22 @@ class VerifyReturns extends Command
             if($user->isFirstReturnDay() && $user->state != 'return-1'){
                 $user->state = 'not-return-1';
                 $user->access = false;
+                $user->disabledBranch();
+                $user->save();
                 Log::info('Sponsored : '.$user->full_name .' State: '.$user->state);
             }
             if($user->isSecondReturnDay() && $user->state != 'return-2'){
                 $user->state = 'not-return-2';
                 $user->access = false;
+                $user->disabledBranch();
+                $user->save();
                 Log::info('Sponsored : '.$user->full_name .' State: '.$user->state);
             }
             if($user->isThirdReturnDay() && $user->state != 'return-3'){
                 $user->state = 'not-return-3';
                 $user->access = false;
+                $user->disabledBranch();
+                $user->save();
                 Log::info('Sponsored : '.$user->full_name .' State: '.$user->state);
             }
 

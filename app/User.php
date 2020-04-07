@@ -299,6 +299,17 @@ class User extends Authenticatable
         return '<ul class="tree"><span class="master" id="'. $parent->id.'">'.$parent->full_name.'</span>'.$this->getDebtorsChildren($parent->sponsored,$limit).'</ul>';
     }
 
+    public function disabledBranch($parent = null){
+        $parent = $parent == null ? $this : $parent;
+        if(count($parent->sponsored) > 0){
+            foreach ($parent->sponsored as $child) {
+                $child->access = false;
+                $child->save();
+                $child->disabledBranch($child);
+            }
+        }
+    }
+
     public function sponsor(){
         return $this->belongsTo('App\User','sponsor_id');
     }
