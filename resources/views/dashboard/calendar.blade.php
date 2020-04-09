@@ -39,27 +39,27 @@
                 <td>{{ \App\Helpers\Dates::transform(Auth()->user()->firstReturn()) }}</td>
 			</tr>
             <tr>
-                <td style="text-overflow:ellipsis; overflow:hidden">PRIMER DIA DEL 2º COBRO</td>
+                 <td style="text-overflow:ellipsis; overflow:hidden">PRIMER DIA PARA MONITOREAR Y AYUDAR A LOS QUE ESTAN COBRANDO</td>
                 <td>{{ \App\Helpers\Dates::transform(Auth()->user()->secondCollect()) }}</td>
 			</tr>
             <tr>
-                <td style="text-overflow:ellipsis; overflow:hidden">SEGUNDO DIA DEL 2º COBRO</td>
+                 <td style="text-overflow:ellipsis; overflow:hidden">SEGUNDO DIA PARA MONITOREAR Y AYUDAR A LOS QUE ESTAN COBRANDO</td>
                 <td>{{ \App\Helpers\Dates::transform(Auth()->user()->limitSecondCollect()) }}</td>
 			</tr>
             <tr>
-                <td style="text-overflow:ellipsis; overflow:hidden">SEGUNDA DEVOLUCION 50%</td>
+                <td style="text-overflow:ellipsis; overflow:hidden">SEGUNDO COBRO Y SEGUNDA DEVOLUCION 50%</td>
                 <td>{{ \App\Helpers\Dates::transform(Auth()->user()->secondReturn()) }}</td>
 			</tr>
             <tr>
-                <td style="text-overflow:ellipsis; overflow:hidden">PRIMER DIA DEL 3º COBRO</td>
+                <td style="text-overflow:ellipsis; overflow:hidden">PRIMER PARA MONITOREAR Y AYUDAR A LOS QUE ESTAN COBRANDO</td>
                 <td>{{ \App\Helpers\Dates::transform(Auth()->user()->thirdCollect()) }}</td>
 			</tr>
             <tr>
-                <td style="text-overflow:ellipsis; overflow:hidden">SEGUNDO DIA DEL 3º COBRO</td>
+                <td style="text-overflow:ellipsis; overflow:hidden">SEGUNDO PARA MONITOREAR Y AYUDAR A LOS QUE ESTAN COBRANDO</td>
                 <td>{{ \App\Helpers\Dates::transform(Auth()->user()->limitThirdCollect()) }}</td>
 			</tr>
             <tr>
-                <td style="text-overflow:ellipsis; overflow:hidden">TERCERA DEVOLUCION 10%</td>
+                <td style="text-overflow:ellipsis; overflow:hidden">TERCER COBRO Y TERCERA DEVOLUCION 10%</td>
                 <td>{{ \App\Helpers\Dates::transform(Auth()->user()->thirdReturn()) }}</td>
 			</tr>
 		</tbody>
