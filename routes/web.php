@@ -57,8 +57,11 @@ Route::middleware(['auth','access'])->group(function(){
     Route::get('/branch/{user}','DashboardController@branch')->name('branch');
     Route::get('/calendar','DashboardController@calendar')->name('calendar');
 
-    Route::get('/return','DashboardController@return')->name('return');
-    Route::post('/return/{user}','DashboardController@update_return')->name('update_return');
+    Route::group(['middleware' => ['return']], function () {
+        Route::get('/return','DashboardController@return')->name('return');
+        Route::post('/return/{user}','DashboardController@update_return')->name('update_return');
+    });
+
 
 
 });

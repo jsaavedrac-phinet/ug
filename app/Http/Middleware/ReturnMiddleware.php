@@ -3,9 +3,8 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Support\Facades\Auth;
 
-class CollectMiddleware
+class ReturnMiddleware
 {
     /**
      * Handle an incoming request.
@@ -16,7 +15,7 @@ class CollectMiddleware
      */
     public function handle($request, Closure $next)
     {
-        if(Auth::user()->isCollectionDay()){
+        if(Auth::user()->isReturnDay()){
             return $next($request);
         }
         return redirect(route('home'));

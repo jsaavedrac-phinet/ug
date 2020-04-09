@@ -68,6 +68,7 @@ class Kernel extends HttpKernel
         'collect'       => \App\Http\Middleware\CollectMiddleware::class,
         'admin.pioneers'=> \App\Http\Middleware\PioneerReturnMiddleware::class,
         'access'        =>  \App\Http\Middleware\AccessMiddleware::class,
+        'return'        =>  \App\Http\Middleware\ReturnMiddleware::class,
     ];
 
     /**
