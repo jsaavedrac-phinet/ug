@@ -30,7 +30,7 @@
 			<tr>
                 <th>NOMBRE</th>
                 <th>ROL</th>
-                @if ((\App\Helpers\Dates::getNameDay(session('day')) == 'Martes' || \App\Helpers\Dates::getNameDay(session('day')) == 'Viernes') && Auth::user()->role != 'superamdin' )
+                @if ((\App\Helpers\Dates::getNameDay(session('day')) == 'Martes' || \App\Helpers\Dates::getNameDay(session('day')) == 'Viernes') && Auth::user()->role != 'superadmin' )
                 <th>
                     ESTADO
                 </th>
@@ -51,7 +51,7 @@
                 <td style="text-overflow:ellipsis; overflow:hidden">
                     {!! $item->getRole() !!}
                 </td>
-                @if ((\App\Helpers\Dates::getNameDay(session('day')) == 'Martes' || \App\Helpers\Dates::getNameDay(session('day')) == 'Viernes') && Auth::user()->role != 'superamdin' )
+                @if ((\App\Helpers\Dates::getNameDay(session('day')) == 'Martes' || \App\Helpers\Dates::getNameDay(session('day')) == 'Viernes') && Auth::user()->role != 'superadmin' )
                 <td>
                     {{ $item->getState() }}
                 </td>

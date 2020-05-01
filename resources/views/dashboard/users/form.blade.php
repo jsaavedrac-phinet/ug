@@ -53,7 +53,7 @@
         @else
         <input type="hidden" name="sponsor_id" value="">
             @if (!$data['view'])
-            @if ($data['array'] &&  $data['array']->role !== 'sponsored')
+            @if (Auth::user()->role !== 'sponsored')
             <div class="data-option">
                 <label for="role">Rol</label>
                 <select name="role" id="role">
