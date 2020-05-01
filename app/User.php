@@ -358,14 +358,26 @@ class User extends Authenticatable
             case 'payed':
                 return 'PAGÓ';
             break;
+            case 'not-payed':
+                return 'NO PAGÓ';
+            break;
             case 'return-1':
                 return 'RETORNO 1';
+            break;
+            case 'not-return-1':
+                return 'NO RETORNO 1';
             break;
             case 'return-2':
                 return 'RETORNO 2';
             break;
+            case 'not-return-2':
+                return 'NO RETORNO 2';
+            break;
             case 'return-3':
                 return 'RETORNO 3';
+            break;
+            case 'not-return-3':
+                return 'NO RETORNO 3';
             break;
             case 'disabled':
                 return 'DESHABILITADO';

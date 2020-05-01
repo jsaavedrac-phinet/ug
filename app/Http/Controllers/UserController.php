@@ -121,8 +121,16 @@ class UserController extends Controller
     {
         DB::beginTransaction();
         try{
-            $user->fill($request->only('full_name','dni','phone','user','bank_account_number','role','group_id','sponsor_id'));
+
+            $user->fill($request->only('full_name','dni','phone','user','bank_account_number','role','group_id','sponsor_id','state'));
             $user->password= bcrypt($request->password);
+            if($request->state !== 'disabled'){
+                $user->access = true;
+            }
+
+            if(strrpos($request->state,'not') !== false){
+                $user->access = false;
+            }
             $user->save();
             DB::commit();
             return response(['message' => 'Se ha actualizado la información del usuario corrrectamente']);

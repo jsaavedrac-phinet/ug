@@ -25,43 +25,10 @@
 </div>
 
 <div class="body-content">
-	@if (count($data['array']) >0)
-	<table>
-		<caption>Total : {{ count($data['array']) }}</caption>
-		<thead>
-			<tr>
-                <th>NOMBRE</th>
-                <th>
-                    ESTADO
-                </th>
-
-				<th width="50%" >ACCIONES</th>
-			</tr>
-		</thead>
-		<tbody>
-			@foreach ($data['array'] as  $key =>$item)
-			<tr>
-                <td style="text-overflow:ellipsis; overflow:hidden">
-                    {!! $item->full_name !!}
-                </td>
-                <td>
-                    {{ $item->getState() }}
-                </td>
-				<td class="acciones">
-                    <a class="btn btn-edit" href="{{ route('branch', $item->id) }}" target="_blank"><i class="fas fa-sitemap"></i></a>
-                    <a class="btn btn-view" href="{{ route('user.show', $item->id) }}" target="_blank"><i class="fas fa-eye"></i></a>
- 				</td>
-			</tr>
-			@endforeach
-
-		</tbody>
-    </table>
-    @if (Auth()->user()->role != 'superadmin' && gettype($data['array']) != 'array' )
-    <div class="paginado">
-		{{ $data['array']->links() }}
-	</div>
-    @endif
-
+    @if (count($data['array']) >0)
+    <div id="box">
+        @include('dashboard.userlist')
+    </div>
 	@else
 	<h2>NO HAY USUARIOS REGISTRADOS</h2>
 	@endif
@@ -108,6 +75,8 @@
 	button:disabled,
 	button[disabled]{background-color: #cccccc !important;color: #666666 !important;cursor: not-allowed;}
 
+    .filter_box{display: flex; justify-content: flex-end;width: 90%;margin-bottom: 1em}
+    .filter_box #filter{width: calc(100% - 4em); box-sizing: border-box; padding:0 1em}
 	table{width: 100%;}
 	table th{padding: 0.1em 0.5em; text-align: center; background: var(--principal); color:  #FFF;}
 	table td{padding: 0.1em 0.5em; text-align: center; background: #FFF; color: #444; cursor: default;}
@@ -133,4 +102,33 @@
 @section('scripts')
 
 <script type="text/javascript" src="{{ asset('js/ajax.js') }}"></script>
+<script>
+$(document).on('paste','#filter',function(event){
+		event.preventDefault();
+	});
+
+	$(document).on('keyup','#filter',function(event){
+		if (event.keyCode == 13) {
+			$('#search').click();
+		}
+	});
+
+    $(document).on('click','#search',function(event){
+		event.preventDefault();
+		var id = $(this).attr('numero');
+		var data = new FormData();
+        data.append('filter',$('#filter').val());
+			$.ajax({
+				url: window.location.href,
+				data: data,
+				type: 'POST',
+				contentType: false,
+				processData: false,
+				cache: false,
+    		})
+			.done(function(data){
+				$('#box').html(data.result);
+			});
+	});
+</script>
 @endsection

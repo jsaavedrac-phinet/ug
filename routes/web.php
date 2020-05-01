@@ -55,6 +55,7 @@ Route::middleware(['auth','access'])->group(function(){
     Route::get('/monitor','DashboardController@monitor')->name('monitor');
 
     Route::get('/branch/{user}','DashboardController@branch')->name('branch');
+    Route::post('/branch/{user}','DashboardController@branchFilter');
     Route::get('/calendar','DashboardController@calendar')->name('calendar');
 
     Route::group(['middleware' => ['return']], function () {

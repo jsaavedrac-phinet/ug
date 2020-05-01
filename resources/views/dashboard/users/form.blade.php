@@ -53,6 +53,7 @@
         @else
         <input type="hidden" name="sponsor_id" value="">
             @if (!$data['view'])
+            @if ($data['array'] &&  $data['array']->role !== 'sponsored')
             <div class="data-option">
                 <label for="role">Rol</label>
                 <select name="role" id="role">
@@ -69,6 +70,28 @@
                     @endforeach
                 </select>
             </div>
+            @endif
+            @if ( $data['array'] && $data['array']->role == 'sponsored' && $data['method'] == 'PUT')
+            <div class="data-option">
+                <label for="state">Estado</label>
+                <select name="state" id="state">
+                    <option {{ ($data['array'] && $data['array']->state == 'registered' ? 'selected="selected"' : ''  ) }} value="registered">REGISTRADO</option>
+                    <option {{ ($data['array'] && $data['array']->state == 'payed' ? 'selected="selected"' : ''  ) }} value="payed">PAGÓ</option>
+                    <option {{ ($data['array'] && $data['array']->state == 'not-payed' ? 'selected="selected"' : ''  ) }} value="not-payed">NO PAGÓ</option>
+                    <option {{ ($data['array'] && $data['array']->state == 'return-1' ? 'selected="selected"' : ''  ) }} value="return-1">RETORNO 1</option>
+                    <option {{ ($data['array'] && $data['array']->state == 'not-return-1' ? 'selected="selected"' : ''  ) }} value="not-return-1">NO RETORNO 1</option>
+                    <option {{ ($data['array'] && $data['array']->state == 'return-2' ? 'selected="selected"' : ''  ) }} value="return-2">RETORNO 2</option>
+                    <option {{ ($data['array'] && $data['array']->state == 'not-return-2' ? 'selected="selected"' : ''  ) }} value="not-return-2">NO RETORNO 2</option>
+                    <option {{ ($data['array'] && $data['array']->state == 'return-3' ? 'selected="selected"' : ''  ) }} value="return-3">RETORNO 3</option>
+                    <option {{ ($data['array'] && $data['array']->state == 'not-return-3' ? 'selected="selected"' : ''  ) }} value="not-return-3">RETORNO 3</option>
+                    <option {{ ($data['array'] && $data['array']->state == 'finished' ? 'selected="selected"' : ''  ) }} value="finished">FINALIZADO</option>
+                </select>
+            </div>
+            <input type="hidden" name="role" value="{{ $data['array'] ? $data['array']->role  : '' }}">
+            @else
+
+            <input type="hidden" name="state" value="{{ $data['array'] ? $data['array']->state : '' }}">
+            @endif
             @else
             <div class="data-option">
                 <label for="role">Rol</label>

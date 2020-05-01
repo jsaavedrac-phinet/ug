@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\ColorSetting;
 use App\Helpers\Dates;
+use App\Http\Requests\BranchFilter;
 use App\Http\Requests\DayRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\User;
@@ -120,11 +121,11 @@ class DashboardController extends Controller
         $data['title'] = 'Mi rama';
         $data['array'] =$user->getDebtors(9,false);
         if($user->role == 'superadmin'){
-            $data['array'] = User::orderBy('id','DESC')->where('role','<>','superadmin')->paginate(70);
+            $data['array'] = User::orderBy('id','DESC')->where('role','<>','superadmin')->paginate(10);
         }
 
         if($user->role == 'admin'){
-            $data['array'] = User::orderBy('id','DESC')->where('admin_id','=',$user->id)->paginate(70);
+            $data['array'] = User::orderBy('id','DESC')->where('admin_id','=',$user->id)->paginate(10);
         }
 
 
@@ -133,6 +134,24 @@ class DashboardController extends Controller
             return view('dashboard.branchTree')->with('data',$data);
         }
         return view('dashboard.branch')->with('data',$data);
+    }
+
+    public function branchFilter(Request $request){
+        if($request->filter != ''){
+            $data['array'] = User::orderBy('id','DESC')->where('role','<>','superadmin')->where(function($query) use ($request){
+                $query
+                ->where('full_name','ILIKE','%'.$request->filter.'%')
+                ->orWhere('dni','ILIKE','%'.$request->filter.'%')
+                ->orWhere('phone','ILIKE','%'.$request->filter.'%')
+                ->orWhere('bank_account_number','ILIKE','%'.$request->filter.'%')
+                ;
+
+            })->paginate(10);
+        }else{
+            $data['array'] = User::orderBy('id','DESC')->where('role','<>','superadmin')->paginate(10);
+        }
+
+        return response()->json(["result"=>view('dashboard.userlist',array('data'=>$data))->render()]);
     }
 
 
