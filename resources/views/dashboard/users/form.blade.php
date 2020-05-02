@@ -83,7 +83,7 @@
                     <option {{ ($data['array'] && $data['array']->state == 'return-2' ? 'selected="selected"' : ''  ) }} value="return-2">RETORNO 2</option>
                     <option {{ ($data['array'] && $data['array']->state == 'not-return-2' ? 'selected="selected"' : ''  ) }} value="not-return-2">NO RETORNO 2</option>
                     <option {{ ($data['array'] && $data['array']->state == 'return-3' ? 'selected="selected"' : ''  ) }} value="return-3">RETORNO 3</option>
-                    <option {{ ($data['array'] && $data['array']->state == 'not-return-3' ? 'selected="selected"' : ''  ) }} value="not-return-3">RETORNO 3</option>
+                    <option {{ ($data['array'] && $data['array']->state == 'not-return-3' ? 'selected="selected"' : ''  ) }} value="not-return-3">NO RETORNO 3</option>
                     <option {{ ($data['array'] && $data['array']->state == 'finished' ? 'selected="selected"' : ''  ) }} value="finished">FINALIZADO</option>
                 </select>
             </div>

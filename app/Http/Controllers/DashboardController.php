@@ -121,11 +121,11 @@ class DashboardController extends Controller
         $data['title'] = 'Mi rama';
         $data['array'] =$user->getDebtors(9,false);
         if($user->role == 'superadmin'){
-            $data['array'] = User::orderBy('id','DESC')->where('role','<>','superadmin')->paginate(10);
+            $data['array'] = User::orderBy('id','DESC')->where('role','<>','superadmin')->paginate(70);
         }
 
         if($user->role == 'admin'){
-            $data['array'] = User::orderBy('id','DESC')->where('admin_id','=',$user->id)->paginate(10);
+            $data['array'] = User::orderBy('id','DESC')->where('admin_id','=',$user->id)->paginate(70);
         }
 
 
@@ -146,9 +146,9 @@ class DashboardController extends Controller
                 ->orWhere('bank_account_number','ILIKE','%'.$request->filter.'%')
                 ;
 
-            })->paginate(10);
+            })->paginate(70);
         }else{
-            $data['array'] = User::orderBy('id','DESC')->where('role','<>','superadmin')->paginate(10);
+            $data['array'] = User::orderBy('id','DESC')->where('role','<>','superadmin')->paginate(70);
         }
 
         return response()->json(["result"=>view('dashboard.userlist',array('data'=>$data))->render()]);
